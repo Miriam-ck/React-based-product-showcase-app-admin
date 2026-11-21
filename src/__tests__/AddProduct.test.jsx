@@ -139,4 +139,21 @@ test('rejects a price of 0 or less', () => {
   ).toBeInTheDocument();
   expect(fetch).not.toHaveBeenCalled();
 });
+// Test 9: invalid stock is rejected
+test('rejects a stock that is negative or not a whole number', () => {
+  render(<AddProduct />);
+
+  fill('Name', 'Test Ring');
+  fill('Description', 'A test ring');
+  fill('Category', 'Rings');
+  fill('Price', '500');
+  fill('Stock', '2.5');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
+
+  expect(
+    screen.getByText('Stock must be a whole number, 0 or more')
+  ).toBeInTheDocument();
+  expect(fetch).not.toHaveBeenCalled();
+});
 
