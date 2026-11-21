@@ -121,3 +121,22 @@ test('empty form shows required errors and does not call fetch', () => {
   expect(screen.getByText('Stock is required')).toBeInTheDocument();
   expect(fetch).not.toHaveBeenCalled();
 });
+
+// Test 8: invalid price is rejected
+test('rejects a price of 0 or less', () => {
+  render(<AddProduct />);
+
+  fill('Name', 'Test Ring');
+  fill('Description', 'A test ring');
+  fill('Category', 'Rings');
+  fill('Price', '-5');
+  fill('Stock', '3');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
+
+  expect(
+    screen.getByText('Price must be a number greater than 0')
+  ).toBeInTheDocument();
+  expect(fetch).not.toHaveBeenCalled();
+});
+
