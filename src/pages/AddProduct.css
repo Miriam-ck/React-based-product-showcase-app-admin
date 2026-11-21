@@ -87,6 +87,24 @@
   border-color: #876822;
 }
 
+/* Validation error styles */
+.error-text {
+  margin: 0;
+  color: #b3261e;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.submit-error {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid #d93025;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b3261e;
+  font-size: 0.9rem;
+}
+
 /* Bottom action buttons: Add product + Cancel */
 .add-product-actions {
   display: flex;
@@ -95,30 +113,6 @@
   margin-top: 0.25rem;
 }
 
-<<<<<<< HEAD
-.form-card .btn.btn-secondary {
-  background: #fff;
-  color: #333;
-  border: 1px solid #ccc;
-}
-
-/* Add error styles for the Add Product form validation */
-.form-card .error-text {
-  margin: 0;
-  color: #b3261e;
-  font-size: 0.85rem;
-  font-weight: 400;
-}
-
-.form-card .submit-error {
-  margin: 0;
-  padding: 10px 14px;
-  border: 1px solid #d93025;
-  border-radius: 8px;
-  background: #fdecea;
-  color: #b3261e;
-  font-size: 0.9rem;
-=======
 .btn-submit {
   background-color: #876822;
   color: #ffffff;
@@ -162,5 +156,4 @@
   .form-row-two {
     grid-template-columns: 1fr;
   }
->>>>>>> upstream/develop
 }
