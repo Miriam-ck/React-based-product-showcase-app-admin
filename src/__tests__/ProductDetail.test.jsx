@@ -92,6 +92,99 @@ test("saving sends a PATCH with the new price", async () => {
   expect(JSON.parse(patchCall[1].body).price).toBe(1300);
 });
 
+
+test("saving sends all seven updated product fields", async () => {
+  renderPage();
+
+  await userEvent.clear(await screen.findByLabelText("Name"));
+  await userEvent.type(screen.getByLabelText("Name"), "Diamond Ring");
+
+  await userEvent.clear(screen.getByLabelText("Description"));
+  await userEvent.type(
+    screen.getByLabelText("Description"),
+    "Premium diamond ring"
+  );
+
+  await userEvent.selectOptions(
+    screen.getByLabelText("Category"),
+    "Necklaces"
+  );
+
+  await userEvent.clear(screen.getByLabelText("Material"));
+  await userEvent.type(screen.getByLabelText("Material"), "Platinum");
+
+  await userEvent.clear(screen.getByLabelText("Price (USD)"));
+  await userEvent.type(screen.getByLabelText("Price (USD)"), "2500");
+
+  await userEvent.clear(screen.getByLabelText("Stock"));
+  await userEvent.type(screen.getByLabelText("Stock"), "10");
+
+  await userEvent.clear(screen.getByLabelText("Image URL"));
+  await userEvent.type(
+    screen.getByLabelText("Image URL"),
+    "https://example.com/ring.jpg"
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", { name: "Save changes" })
+  );
+
+  expect(await screen.findByRole("status"))
+    .toHaveTextContent("Changes saved.");
+
+  const patchCall = fetch.mock.calls.find(
+    ([, options]) => options?.method === "PATCH"
+  );
+
+  const body = JSON.parse(patchCall[1].body);
+
+  expect(body).toEqual({
+    name: "Diamond Ring",
+    description: "Premium diamond ring",
+    category: "Necklaces",
+    material: "Platinum",
+    price: 2500,
+    stock: 10,
+    image: "https://example.com/ring.jpg",
+  });
+
+  expect(screen.getByLabelText("Name"))
+    .toHaveValue("Diamond Ring");
+});
+
+
+test("shows an error when PATCH fails", async () => {
+  fetch.mockImplementation(async (url, options) => {
+    if (options?.method === "PATCH") {
+      return {
+        ok: false,
+        json: async () => ({}),
+      };
+    }
+
+    return {
+      ok: true,
+      json: async () => product,
+    };
+  });
+
+  renderPage();
+
+  const price = await screen.findByLabelText("Price (USD)");
+
+  await userEvent.clear(price);
+  await userEvent.type(price, "1500");
+
+  await userEvent.click(
+    screen.getByRole("button", { name: "Save changes" })
+  );
+
+  expect(await screen.findByRole("alert"))
+    .toHaveTextContent(
+      "Could not save the changes. Please try again."
+    );
+});
+
 // Test 5: cancelling the confirmation deletes nothing
 test("cancelling the delete confirmation does not delete", async () => {
   vi.spyOn(window, "confirm").mockReturnValue(false);
