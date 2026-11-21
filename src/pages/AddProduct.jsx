@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../api';
 import './AddProduct.css';
 
@@ -13,6 +13,20 @@ const CATEGORIES = [
   'Cufflinks',
 ];
 
+// Check the form values and return an object of error messages
+export function validate({ name, description, category, price, stock }) {
+  const errors = {};
+  if (!name.trim()) errors.name = 'Name is required';
+  if (!description.trim()) errors.description = 'Description is required';
+  if (!category) errors.category = 'Category is required';
+  if (price === '') errors.price = 'Price is required';
+  else if (Number(price) <= 0) errors.price = 'Price must be a number greater than 0';
+  if (stock === '') errors.stock = 'Stock is required';
+  else if (!Number.isInteger(Number(stock)) || Number(stock) < 0)
+    errors.stock = 'Stock must be a whole number, 0 or more';
+  return errors;
+}
+
 function AddProduct({ onAdd }) {
   // Manage each product input value using React state
   const [name, setName] = useState('');
@@ -23,9 +37,17 @@ function AddProduct({ onAdd }) {
   const [stock, setStock] = useState('');
   const [image, setImage] = useState('');
 
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
+
   // Handle form submission
   function handleSubmit(e) {
     e.preventDefault();
+    setSubmitError('');
+    const validationErrors = validate({ name, description, category, price, stock });
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
 
     // Prepare the new product data
     const newProduct = {
@@ -64,14 +86,18 @@ function AddProduct({ onAdd }) {
         setPrice('');
         setStock('');
         setImage('');
+
+        // Go back to the product list
+        navigate('/products');
       })
       .catch((error) => {
         console.error('Error adding product:', error);
+        setSubmitError('Could not add the product. Please try again.');
       });
   }
 
   return (
-    <form className="card form-card" onSubmit={handleSubmit}>
+    <form className="card form-card" onSubmit={handleSubmit} noValidate>
       <h2>Add Product</h2>
 
       <p className="Form-subtitle">
@@ -85,6 +111,7 @@ function AddProduct({ onAdd }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+        {errors.name && <p role="alert" className="error-text">{errors.name}</p>}
       </div>
 
       <div className="field">
@@ -94,6 +121,7 @@ function AddProduct({ onAdd }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        {errors.description && <p role="alert" className="error-text">{errors.description}</p>}
       </div>
 
       <div className="row">
@@ -112,6 +140,7 @@ function AddProduct({ onAdd }) {
               </option>
             ))}
           </select>
+          {errors.category && <p role="alert" className="error-text">{errors.category}</p>}
         </div>
 
         <div className="field">
@@ -133,6 +162,7 @@ function AddProduct({ onAdd }) {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
+          {errors.price && <p role="alert" className="error-text">{errors.price}</p>}
         </div>
 
         <div className="field">
@@ -143,6 +173,7 @@ function AddProduct({ onAdd }) {
             value={stock}
             onChange={(e) => setStock(e.target.value)}
           />
+          {errors.stock && <p role="alert" className="error-text">{errors.stock}</p>}
         </div>
       </div>
 
@@ -154,6 +185,8 @@ function AddProduct({ onAdd }) {
           onChange={(e) => setImage(e.target.value)}
         />
       </div>
+
+      {submitError && <p role="alert" className="submit-error">{submitError}</p>}
 
       <div className="actions">
         <button type="submit" className="btn btn-primary">
