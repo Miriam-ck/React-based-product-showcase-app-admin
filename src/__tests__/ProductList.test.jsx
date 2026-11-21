@@ -211,4 +211,40 @@ describe("ProductList Component", () => {
       screen.getByText("No products found.")
     ).toBeTruthy();
   });
+
+    // Test K: Clearing the search input
+  it("displays all products when the search is cleared", () => {
+    renderProductList();
+
+    const searchInput = screen.getByRole("searchbox");
+
+    // Search for one product
+    fireEvent.change(searchInput, {
+      target: { value: "Solitaire" },
+    });
+
+    // Confirm other products are hidden
+    expect(screen.queryByText("Pearl Drop Earrings")).toBeNull();
+
+    // Clear the search
+    fireEvent.change(searchInput, {
+      target: { value: "" },
+    });
+
+    // Confirm all products appear again
+    expect(screen.getByText("Solitaire Ring")).toBeTruthy();
+    expect(screen.getByText("Pearl Drop Earrings")).toBeTruthy();
+    expect(screen.getByText("Tennis Bracelet")).toBeTruthy();
+  });
+
+  // Test L: One card per product
+  it("renders one ProductCard for each product available product", () => {
+    const { container } = renderProductList();
+
+    const productCards = container.querySelectorAll(
+      ".product-card"
+    );
+
+    expect(productCards.length).toBe(mockProducts.length);
+  }); 
 });
