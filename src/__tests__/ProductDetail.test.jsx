@@ -65,6 +65,18 @@ test("shows a not-found message for an unknown id", async () => {
   expect(await screen.findByRole("heading", { name: "Product not found" })).toBeInTheDocument();
 });
 
+
+test("shows loading state while fetching the product", async () => {
+  fetch.mockImplementation(
+    () => new Promise(() => {})
+  );
+
+  renderPage();
+
+  expect(screen.getByText("Loading product..."))
+    .toBeInTheDocument();
+});
+
 // Test 3: a bad price shows an error and nothing is sent
 test("shows an error and does not save when the price is invalid", async () => {
   renderPage();
