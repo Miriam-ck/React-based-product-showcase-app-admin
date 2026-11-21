@@ -1,9 +1,16 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi, beforeEach, test, expect } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AddProduct from '../pages/AddProduct';
+
+// Mock the router's navigate function
+const mockNavigate = vi.hoisted(() => vi.fn());
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
+}));
 
 // Mock fetch before each test
 beforeEach(() => {
+  mockNavigate.mockClear();
   global.fetch = vi.fn(() =>
     Promise.resolve({
       ok: true,
@@ -87,17 +94,17 @@ test('submits the new product with POST', async () => {
   });
 });
 
-// Test 6: calls onAdd and clears the form after submit
-test('calls onAdd and clears the form after submit', async () => {
+// Test 6: calls onAdd and redirects after submit
+test('calls onAdd and redirects to /products after submit', async () => {
   const onAdd = vi.fn();
 
   render(<AddProduct onAdd={onAdd} />);
 
- fill('Name', 'Test Ring');
- fill('Description','A test ring');
- fill('Category','Rings');
- fill('Price','500');
- fill('Stock','3');
+  fill('Name', 'Test Ring');
+  fill('Description', 'A test ring');
+  fill('Category', 'Rings');
+  fill('Price', '500');
+  fill('Stock', '3');
 
   fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
 
@@ -105,10 +112,10 @@ test('calls onAdd and clears the form after submit', async () => {
     expect(onAdd).toHaveBeenCalledWith({ id: 13, name: 'Test Ring' });
   });
 
-  expect(screen.getByLabelText('Name')).toHaveValue('');
-  });
+  expect(mockNavigate).toHaveBeenCalledWith('/products');
+});
 
-  // Test 7: required fields show errors and do not call fetch
+// Test 7: required fields show errors and do not call fetch
 test('empty form shows required errors and does not call fetch', () => {
   render(<AddProduct />);
 
@@ -139,6 +146,7 @@ test('rejects a price of 0 or less', () => {
   ).toBeInTheDocument();
   expect(fetch).not.toHaveBeenCalled();
 });
+
 // Test 9: invalid stock is rejected
 test('rejects a stock that is negative or not a whole number', () => {
   render(<AddProduct />);
