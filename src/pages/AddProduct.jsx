@@ -97,7 +97,7 @@ export default function AddProduct({ onAdd, onCancel }) {
     <div className="add-product-page">
       <div className="add-product-wrapper">
         <div className="add-product-header">
-          <h2>Add product</h2>
+          <h2>Add Product</h2>
           <p className="add-product-subtitle">Add a new item to the store catalog.</p>
         </div>
 
@@ -184,7 +184,7 @@ export default function AddProduct({ onAdd, onCancel }) {
           </div>
 
           <div className="form-field">
-            <label htmlFor="image">Image URL</label>
+            <label htmlFor="image">Image</label>
             <input
               id="image"
               type="url"
@@ -197,7 +197,7 @@ export default function AddProduct({ onAdd, onCancel }) {
 
           <div className="add-product-actions">
             <button type="submit" className="btn-submit">
-              Add product
+              Add Product
             </button>
             <button type="button" className="btn-cancel" onClick={handleCancel}>
               Cancel
