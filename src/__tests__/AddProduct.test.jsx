@@ -93,7 +93,11 @@ test('calls onAdd and clears the form after submit', async () => {
 
   render(<AddProduct onAdd={onAdd} />);
 
-  fill('Name', 'Test Ring');
+ fill('Name', 'Test Ring');
+ fill('Description','A test ring');
+ fill('Category','Rings');
+ fill('Price','500');
+ fill('Stock','3');
 
   fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
 
@@ -102,4 +106,18 @@ test('calls onAdd and clears the form after submit', async () => {
   });
 
   expect(screen.getByLabelText('Name')).toHaveValue('');
+  });
+
+  // Test 7: required fields show errors and do not call fetch
+test('empty form shows required errors and does not call fetch', () => {
+  render(<AddProduct />);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
+
+  expect(screen.getByText('Name is required')).toBeInTheDocument();
+  expect(screen.getByText('Description is required')).toBeInTheDocument();
+  expect(screen.getByText('Category is required')).toBeInTheDocument();
+  expect(screen.getByText('Price is required')).toBeInTheDocument();
+  expect(screen.getByText('Stock is required')).toBeInTheDocument();
+  expect(fetch).not.toHaveBeenCalled();
 });
