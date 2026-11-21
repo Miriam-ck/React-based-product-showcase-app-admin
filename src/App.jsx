@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import ProductList from "./pages/ProductList";
 import AddProduct from "./pages/AddProduct";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -19,7 +20,7 @@ export default function App() {
           <Route path="/" element={<Home  store ={store}loading ={loading} error={error}/>} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/new" element={<AddProduct />} />
-          
+          <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

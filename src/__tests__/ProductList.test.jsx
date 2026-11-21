@@ -75,6 +75,7 @@ describe("ProductList Component", () => {
     });
   });
 
+  
   // Test A: Checking of an API endpoint
   it("fetches products using the correct API endpoint", () => {
     renderProductList();
