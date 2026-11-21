@@ -157,3 +157,24 @@ test('rejects a stock that is negative or not a whole number', () => {
   expect(fetch).not.toHaveBeenCalled();
 });
 
+// Test 10: a failed POST shows an error and keeps the typed values
+test('failed POST shows an error and keeps the typed values', async () => {
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+  global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
+
+  render(<AddProduct />);
+
+  fill('Name', 'Test Ring');
+  fill('Description', 'A test ring');
+  fill('Category', 'Rings');
+  fill('Price', '500');
+  fill('Stock', '3');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
+
+  expect(
+    await screen.findByText('Could not add the product. Please try again.')
+  ).toBeInTheDocument();
+  expect(screen.getByLabelText('Name')).toHaveValue('Test Ring');
+  expect(mockNavigate).not.toHaveBeenCalled();
+});
