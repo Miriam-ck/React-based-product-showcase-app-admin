@@ -94,6 +94,9 @@ test('calls onAdd and clears the form after submit', async () => {
   render(<AddProduct onAdd={onAdd} />);
 
   fill('Name', 'Test Ring');
+  fill('Category', 'Rings');
+  fill('Price', '500');
+  fill('Stock', '3');
 
   fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
 
@@ -102,4 +105,10 @@ test('calls onAdd and clears the form after submit', async () => {
   });
 
   expect(screen.getByLabelText('Name')).toHaveValue('');
+});
+
+test('does not submit an empty form', () => {
+  render(<AddProduct />);
+  fireEvent.click(screen.getByRole('button', { name: 'Add Product' }));
+  expect(fetch).not.toHaveBeenCalled();
 });

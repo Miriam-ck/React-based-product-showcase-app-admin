@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { API_URL } from '../api';
 import './AddProduct.css';
@@ -22,10 +21,12 @@ function AddProduct({ onAdd }) {
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   const [image, setImage] = useState('');
+  const [error, setError] = useState('');
 
   // Handle form submission
   function handleSubmit(e) {
     e.preventDefault();
+    setError('');
 
     // Prepare the new product data
     const newProduct = {
@@ -67,6 +68,7 @@ function AddProduct({ onAdd }) {
       })
       .catch((error) => {
         console.error('Error adding product:', error);
+        setError('Could not add the product. Please try again.');
       });
   }
 
@@ -78,12 +80,19 @@ function AddProduct({ onAdd }) {
         Fill in the details below to add a new product to the store.
       </p>
 
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+
       <div className="field">
         <label htmlFor="name">Name</label>
         <input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
       </div>
 
@@ -104,6 +113,7 @@ function AddProduct({ onAdd }) {
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            required
           >
             <option value="">Select a category</option>
             {CATEGORIES.map((c) => (
@@ -130,8 +140,11 @@ function AddProduct({ onAdd }) {
           <input
             id="price"
             type="number"
+            min="0.01"
+            step="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
           />
         </div>
 
@@ -140,8 +153,11 @@ function AddProduct({ onAdd }) {
           <input
             id="stock"
             type="number"
+            min="0"
+            step="1"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
+            required
           />
         </div>
       </div>
